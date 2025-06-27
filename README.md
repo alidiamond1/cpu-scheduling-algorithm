@@ -39,7 +39,7 @@ This application allows users to:
 
 1. Clone the repository
 ```bash
-git clone <repository-url>
+git clone https://github.com/alidiamond1/cpu-scheduling-algorithm.git
 cd cpu-scheduling-simulator
 ```
 
