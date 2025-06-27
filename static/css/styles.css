@@ -1,0 +1,47 @@
+/* Custom styles for CPU Scheduling Simulator */
+
+/* Ensure dialog content is scrollable */
+#dialog-content {
+  overflow-y: auto;
+  max-height: 70vh;
+}
+
+/* Process table styles */
+.process-table-container {
+  overflow-x: auto;
+}
+
+/* Algorithm explanation styles */
+.algorithm-explanation {
+  transition: opacity 0.3s ease;
+}
+
+/* Dialog animations */
+#calculation-dialog {
+  transition: opacity 0.3s ease;
+}
+
+/* Gantt chart styles */
+.gantt-chart {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.gantt-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.gantt-process {
+  padding: 0.5rem 1rem;
+  border: 1px solid #d1d5db;
+  text-align: center;
+  min-width: 50px;
+}
+
+.gantt-time {
+  font-size: 0.75rem;
+  color: #6b7280;
+} 

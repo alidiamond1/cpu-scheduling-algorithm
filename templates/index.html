@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CPU Scheduling Algorithms</title>
+  <!-- External CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  
+  <!-- External JS libraries -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body class="bg-gray-100">
+  <div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-center mb-8">CPU Scheduling Algorithms</h1>
+    
+    <div class="bg-white shadow-md rounded-lg p-6 mb-8">
+      <div class="flex flex-col md:flex-row gap-4 mb-6">
+        <div class="w-full md:w-1/2">
+          <label for="algorithm" class="block text-sm font-medium text-gray-700 mb-1">Select Algorithm</label>
+          <select id="algorithm" class="w-full rounded-md border border-gray-300 py-2 px-3">
+            <option value="fcfs">First-Come, First-Served (FCFS)</option>
+            <option value="sjf">Shortest-Job-First (SJF)</option>
+          <option value="priority">Priority</option>
+            <option value="rr">Round Robin (RR)</option>
+        </select>
+      </div>
+        
+        <div id="quantum-container" class="w-full md:w-1/2 hidden">
+          <label for="quantum" class="block text-sm font-medium text-gray-700 mb-1">Time Quantum</label>
+          <input type="number" id="quantum" min="1" value="1" class="w-full rounded-md border border-gray-300 py-2 px-3">
+      </div>
+    </div>
+
+      <div class="mb-6">
+        <div class="flex justify-between items-center mb-2">
+          <h2 class="text-xl font-semibold">Process Table</h2>
+          <button id="add-process" class="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded">Add Process</button>
+        </div>
+
+    <div class="overflow-x-auto">
+          <table id="process-table" class="w-full border-collapse border border-gray-300">
+            <thead>
+              <tr class="bg-gray-100">
+                <th class="border border-gray-300 px-4 py-2">Process ID</th>
+                <th id="arrival-time-header" class="border border-gray-300 px-4 py-2">Arrival Time</th>
+                <th class="border border-gray-300 px-4 py-2">Burst Time</th>
+                <th id="priority-header" class="border border-gray-300 px-4 py-2 hidden">Priority</th>
+                <th class="border border-gray-300 px-4 py-2">Waiting Time</th>
+                <th class="border border-gray-300 px-4 py-2">Turnaround Time</th>
+                <th class="border border-gray-300 px-4 py-2">Actions</th>
+          </tr>
+        </thead>
+            <tbody id="process-body">
+              <tr>
+                <td class="border border-gray-300 px-4 py-2">P1</td>
+                <td class="border border-gray-300 px-4 py-2 arrival-time-cell"><input type="number" min="0" value="0" class="arrival-time w-20 border rounded px-2 py-1"></td>
+                <td class="border border-gray-300 px-4 py-2"><input type="number" min="1" value="5" class="burst-time w-20 border rounded px-2 py-1"></td>
+                <td class="border border-gray-300 px-4 py-2 priority-cell hidden"><input type="number" min="1" value="1" class="priority w-20 border rounded px-2 py-1"></td>
+                <td class="border border-gray-300 px-4 py-2 waiting-time">-</td>
+                <td class="border border-gray-300 px-4 py-2 turnaround-time">-</td>
+                <td class="border border-gray-300 px-4 py-2">
+                  <button class="delete-process bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded text-sm">Delete</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="border border-gray-300 px-4 py-2">P2</td>
+                <td class="border border-gray-300 px-4 py-2 arrival-time-cell"><input type="number" min="0" value="1" class="arrival-time w-20 border rounded px-2 py-1"></td>
+                <td class="border border-gray-300 px-4 py-2"><input type="number" min="1" value="3" class="burst-time w-20 border rounded px-2 py-1"></td>
+                <td class="border border-gray-300 px-4 py-2 priority-cell hidden"><input type="number" min="1" value="2" class="priority w-20 border rounded px-2 py-1"></td>
+                <td class="border border-gray-300 px-4 py-2 waiting-time">-</td>
+                <td class="border border-gray-300 px-4 py-2 turnaround-time">-</td>
+                <td class="border border-gray-300 px-4 py-2">
+                  <button class="delete-process bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded text-sm">Delete</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="border border-gray-300 px-4 py-2">P3</td>
+                <td class="border border-gray-300 px-4 py-2 arrival-time-cell"><input type="number" min="0" value="2" class="arrival-time w-20 border rounded px-2 py-1"></td>
+                <td class="border border-gray-300 px-4 py-2"><input type="number" min="1" value="8" class="burst-time w-20 border rounded px-2 py-1"></td>
+                <td class="border border-gray-300 px-4 py-2 priority-cell hidden"><input type="number" min="1" value="3" class="priority w-20 border rounded px-2 py-1"></td>
+                <td class="border border-gray-300 px-4 py-2 waiting-time">-</td>
+                <td class="border border-gray-300 px-4 py-2 turnaround-time">-</td>
+                <td class="border border-gray-300 px-4 py-2">
+                  <button class="delete-process bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded text-sm">Delete</button>
+                </td>
+              </tr>
+        </tbody>
+      </table>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div class="bg-gray-50 p-4 rounded-md">
+          <h3 class="font-semibold mb-2">Average Waiting Time</h3>
+          <p id="avg-waiting-time" class="text-xl">-</p>
+        </div>
+        <div class="bg-gray-50 p-4 rounded-md">
+          <h3 class="font-semibold mb-2">Average Turnaround Time</h3>
+          <p id="avg-turnaround-time" class="text-xl">-</p>
+        </div>
+      </div>
+      
+      <div class="flex flex-wrap gap-2 justify-center">
+        <button id="calculate-all" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded font-medium">Calculate All</button>
+        <button id="calculate-waiting-time" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">Calculate Waiting Time</button>
+        <button id="calculate-turnaround-time" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">Calculate Turnaround Time</button>
+        <button id="calculate-avg-waiting-time" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">Calculate Avg Waiting Time</button>
+        <button id="calculate-avg-turnaround-time" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">Calculate Avg Turnaround Time</button>
+      </div>
+    </div>
+
+    <!-- Dialog box for calculation explanations -->
+    <div id="calculation-dialog" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
+      <div class="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full mx-4">
+        <div class="flex justify-between items-center mb-4">
+          <h3 id="dialog-title" class="text-xl font-bold">Calculation Details</h3>
+          <button id="close-dialog" class="text-gray-500 hover:text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+      </button>
+        </div>
+        <div id="dialog-content" class="overflow-y-auto max-h-[70vh]">
+          <!-- Content will be dynamically inserted here -->
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white shadow-md rounded-lg p-6">
+      <h2 class="text-xl font-semibold mb-4">Algorithm Explanation</h2>
+      
+      <div id="fcfs-explanation" class="algorithm-explanation">
+        <h3 class="text-lg font-medium mb-2">First-Come, First-Served (FCFS)</h3>
+        <p>FCFS is the simplest CPU scheduling algorithm where processes are executed in the order they arrive in the ready queue. It is a non-preemptive algorithm.</p>
+        <ul class="list-disc list-inside mt-2 space-y-1 text-sm">
+          <li>Processes are executed in the order they arrive</li>
+          <li>Non-preemptive: once a process starts executing, it continues until it completes</li>
+          <li>Simple to implement but can lead to the "convoy effect" where short processes wait for long processes to complete</li>
+        </ul>
+    </div>
+
+      <div id="sjf-explanation" class="algorithm-explanation hidden">
+        <h3 class="text-lg font-medium mb-2">Shortest-Job-First (SJF)</h3>
+        <p>SJF selects the process with the smallest burst time from the ready queue. It is optimal in terms of average waiting time for a given set of processes.</p>
+        <ul class="list-disc list-inside mt-2 space-y-1 text-sm">
+          <li>Selects the process with the smallest burst time next</li>
+          <li>Non-preemptive: once a process starts executing, it continues until it completes</li>
+          <li>Optimal for minimizing average waiting time but requires knowing/estimating burst times in advance</li>
+        </ul>
+      </div>
+      
+      <div id="priority-explanation" class="algorithm-explanation hidden">
+        <h3 class="text-lg font-medium mb-2">Priority Scheduling</h3>
+        <p>Priority scheduling assigns a priority to each process and the CPU is allocated to the process with the highest priority (lowest priority number).</p>
+        <ul class="list-disc list-inside mt-2 space-y-1 text-sm">
+          <li>Each process has a priority value (lower number = higher priority)</li>
+          <li>Process with highest priority is selected next</li>
+          <li>Non-preemptive: once a process starts executing, it continues until it completes</li>
+          <li>Can lead to "starvation" where lower priority processes wait indefinitely</li>
+        </ul>
+      </div>
+      
+      <div id="rr-explanation" class="algorithm-explanation hidden">
+        <h3 class="text-lg font-medium mb-2">Round Robin (RR)</h3>
+        <p>Round Robin is a preemptive scheduling algorithm that assigns a fixed time slice (quantum) to each process in a circular queue.</p>
+        <ul class="list-disc list-inside mt-2 space-y-1 text-sm">
+          <li>Each process gets a small unit of CPU time (time quantum)</li>
+          <li>Preemptive: if a process doesn't complete within its time quantum, it's moved to the back of the ready queue</li>
+          <li>Fair allocation of CPU time to all processes</li>
+          <li>Time quantum selection is critical: too small increases context switching overhead, too large makes it similar to FCFS</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Include JavaScript files -->
+  <script src="{{ url_for('static', filename='js/algorithms.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/ui.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/api.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
