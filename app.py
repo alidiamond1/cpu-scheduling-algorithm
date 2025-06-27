@@ -402,5 +402,12 @@ def calculate_avg_turnaround_time():
         'avg_turnaround_time': averages['avg_turnaround_time']
     })
 
+# Change this part for Vercel deployment
+# Don't run the app directly when importing the module
+# Instead, expose the app object for Vercel to use
 if __name__ == '__main__':
+    # For local development only
     app.run(debug=True)
+
+# This is what Vercel will use
+# Don't add any code after this line
