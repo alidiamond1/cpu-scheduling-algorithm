@@ -20,13 +20,19 @@ const Algorithms = {
         if (algorithm === "sjf") {
           process.arrival_time = parseInt($(this).find(".arrival-time").val()) || 0;
         } else {
-          // For FCFS, Priority and RR, set arrival time to 0 or index to maintain order  
+          // For FCFS, Priority and RR, set arrival time to 0 or index to maintain order
           process.arrival_time = algorithm === "fcfs" ? index : 0;
         }
         
         // Add priority if required
         if (algorithm === "priority") {
-          process.priority = parseInt($(this).find(".priority").val()) || index + 1;
+          const priorityInput = $(this).find(".priority").val();
+          // Allow priority 0 - only use fallback if input is truly empty/null
+          if (priorityInput === "" || priorityInput === null || priorityInput === undefined) {
+            process.priority = index + 1; // Default fallback
+          } else {
+            process.priority = parseInt(priorityInput);
+          }
         }
         
         console.log(`Process ${index + 1} data:`, process);
@@ -94,16 +100,6 @@ const Algorithms = {
   
   // Generate Priority waiting time explanation
   generatePriorityWaitingTimeExplanation: function(processes, results) {
-    /*
-      Priority (non-preemptive – lower number = higher priority)
-      Executes processes in ascending priority order.  Waiting times are
-      accumulated sequentially, giving the well-known formula:
-
-          WT[i] = WT[i-1] + BT[i-1]
-
-      where the index is with respect to the <strong>priority-sorted</strong> list.
-    */
-
     // Build lookup <id -> waiting_time> from the results array (which is in
     // the same order as the original process table).
     const wtLookup = {};
