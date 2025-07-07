@@ -92,13 +92,68 @@ const UI = {
     $("#calculation-dialog").removeClass("hidden");
   },
   
-  // Update process table with calculation results
-  updateProcessTable: function(processes) {
-    $("#process-body tr").each(function(index) {
-      if (index < processes.length) {
-        const process = processes[index];
-        $(this).find(".waiting-time").text(process.waiting_time);
-        $(this).find(".turnaround-time").text(process.turnaround_time);
+  // Update process table with calculation results and reorder if needed
+  updateProcessTable: function(processes, algorithm = null) {
+    if (algorithm && (algorithm === "priority" || algorithm === "sjf" || algorithm === "fcfs")) {
+      // Reorder table based on execution order
+      this.reorderTableByExecutionOrder(processes, algorithm);
+    } else {
+      // Standard update without reordering
+      $("#process-body tr").each(function(index) {
+        if (index < processes.length) {
+          const process = processes[index];
+          $(this).find(".waiting-time").text(process.waiting_time);
+          $(this).find(".turnaround-time").text(process.turnaround_time);
+        }
+      });
+    }
+  },
+
+  // Reorder table based on algorithm execution order
+  reorderTableByExecutionOrder: function(processes, algorithm) {
+    const tbody = $("#process-body");
+    const rows = tbody.find("tr").detach();
+    
+    // Get execution order based on algorithm
+    let executionOrder = [];
+    
+    if (algorithm === "priority") {
+      // Sort by priority (lower number = higher priority)
+      executionOrder = [...processes].sort((a, b) => a.priority - b.priority);
+    } else if (algorithm === "sjf") {
+      // Sort by burst time for SJF
+      executionOrder = [...processes].sort((a, b) => a.burst_time - b.burst_time);
+    } else if (algorithm === "fcfs") {
+      // Sort by arrival time for FCFS
+      executionOrder = [...processes].sort((a, b) => a.arrival_time - b.arrival_time);
+    } else {
+      // For RR, keep original order
+      executionOrder = processes;
+    }
+    
+    // Reorder rows based on execution order
+    executionOrder.forEach((process, index) => {
+      const originalIndex = process.id - 1; // Process IDs are 1-based
+      if (originalIndex < rows.length) {
+        const row = $(rows[originalIndex]);
+        
+        // Update the process ID to reflect new order
+        row.find("td:first").text(`P${process.id}`);
+        
+        // Update values
+        row.find(".waiting-time").text(process.waiting_time);
+        row.find(".turnaround-time").text(process.turnaround_time);
+        
+        // Update input values to match the process
+        row.find(".burst-time").val(process.burst_time);
+        if (algorithm === "priority") {
+          row.find(".priority").val(process.priority);
+        }
+        if (algorithm === "sjf") {
+          row.find(".arrival-time").val(process.arrival_time);
+        }
+        
+        tbody.append(row);
       }
     });
   },
